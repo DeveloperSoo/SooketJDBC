@@ -1,14 +1,13 @@
 package com.sooket.jdbc.day03.pstmt.common;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class JDBCTemplate {
-		private static final String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
-		private static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
-		private static final String USERNAME = "KH";
-		private static final String PASSWORD = "KH";
+	
 		// Connection에 싱글톤을 적용하지 않은 이유
 		// Connection 싱글톤을 적용하려는 이유는  Conncection Pool(연결을 생성해서 Pooll에 넣고
 		// 재사용할 수 있는 기술)을 사용하려고 하는 것이지만 싱글톤을 적용하고 Connection Pool이
@@ -17,14 +16,28 @@ public class JDBCTemplate {
 		private static JDBCTemplate instance;
 
 		
+		private static final String FILE_NAME = "resources/dev.properties";
+		private Properties prop;
+		
 		private JDBCTemplate () {
 			
 			try {
-				Class.forName(DRIVER_NAME);
+				Reader reader = new FileReader(FILE_NAME); 	// 스트림 열어서 파일 읽기
+				prop = new Properties();					// 읽은 파일 사용하기
+				prop.load(reader);							// 사용 준비 완료
+				String driverName = prop.getProperty("driverName");
+				
+				
+				Class.forName(driverName);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
 		}
 		
 		public static JDBCTemplate getInstance() {
@@ -38,7 +51,11 @@ public class JDBCTemplate {
 		
 		public Connection getConnection() throws SQLException {
 			Connection conn = null;	
-				conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);			
+			String url = prop.getProperty("url");
+			String username = prop.getProperty("username");
+			String password = prop.getProperty("password");
+			
+				conn = DriverManager.getConnection(url, username, password);			
 				
 			return conn;
 		}

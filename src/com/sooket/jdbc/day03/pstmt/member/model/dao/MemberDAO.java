@@ -1,5 +1,9 @@
 package com.sooket.jdbc.day03.pstmt.member.model.dao;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -9,10 +13,42 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.sooket.jdbc.day03.pstmt.member.model.vo.Member;
 
 public class MemberDAO {
+	
+	private static final String FILE_NAME = "resources/query.properties";
+	//private static final String QUERY_NAME = "resources/query.properties";
+	private Properties prop;
+	
+	
+	public MemberDAO () {
+		try {
+			Reader reader = new FileReader(FILE_NAME);
+			prop = new Properties();
+			prop.load(reader);
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
+
+	
+	private static final String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
+	private static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+	private static final String USERNAME = "KH";
+	private static final String PASSWORD = "KH";
+	
+	
+	
 	/*
 	 * 여기서 JDBC 코딩 할거임
 	 * 1. 드라이버 등록
@@ -22,16 +58,11 @@ public class MemberDAO {
 	 * 5. 결과받기
 	 * 6. 자원해제
 	 */
-	
-	private static final String DRIVER_NAME = "oracle.jdbc.driver.OracleDriver";
-	private static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
-	private static final String USERNAME = "KH";
-	private static final String PASSWORD = "KH";
-
 
 
 	// 회원가입 (Insert)
 	public int insertMember(Connection conn, Member member) {
+		
 		String query = "INSERT INTO MEMBER_TBL(MEMBER_ID, MEMBER_PWD, MEMBER_NAME, GENDER, AGE)" 
 				+  "VALUES('"
 				+member.getMemberId()+"','"
@@ -41,6 +72,7 @@ public class MemberDAO {
 				+member.getAge()+")";
 		
 		query ="INSERT INTO MEMBER_TBL(MEMBER_ID, MEMBER_PWD, MEMBER_NAME, GENDER, AGE) VALUES(?, ?, ?, ?, ?)";
+		query = prop.getProperty("insertMember");
 		int result = 0;
 		//Connection conn = null;
 		Statement stmt = null;
@@ -91,6 +123,7 @@ public class MemberDAO {
 											+"' WHERE MEMBER_ID = '"+member.getMemberId()+"'";
 		
 		query = "UPDATE MEMBER_TBL SET MEMBER_PWD = ?, EMAIL = ?, PHONE = ?, ADDRESS = ?, HOBBY = ? WHERE MEMBER_ID = ?";
+		query = prop.getProperty("updateMember");
 		int result = 0;
 		//Connection conn = null;
 		Statement stmt = null;
@@ -137,6 +170,7 @@ public class MemberDAO {
 		String query = "DELETE FROM MEMBER_TBL WHERE LOWER(MEMBER_ID) = LOWER('"+memberId+"')";
 		//String query = "DELETE FROM MEMBER_TBL WHERE MEMBER_ID = '"+memberId+"'";
 		query = "DELETE FROM MEMBER_TBL WHERE LOWER(MEMBER_ID) = LOWER(?)";
+		query = prop.getProperty("deleteMember");
 		int result = 0;
 		//Connection conn = null;
 		Statement stmt = null;
@@ -172,6 +206,7 @@ public class MemberDAO {
 	public List<Member> selectList(Connection conn) {
 		List<Member> mList = new ArrayList<Member>();
 		String query = "SELECT * FROM MEMBER_TBL ORDER BY 1";
+		query = prop.getProperty("selectList");
 		//Connection conn = null;
 		Statement stmt = null;
 		ResultSet rset = null;
@@ -218,6 +253,7 @@ public class MemberDAO {
 		
 		String query = "SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = '"+memberId+"'";
 		query = "SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = ?"; // 물음표로 위치홀더 표시
+		query = prop.getProperty("selectOneById");
 		Member member = null;
 		//Connection conn = null;
 		Statement stmt = null;
@@ -284,6 +320,7 @@ public class MemberDAO {
 
 
 	private Connection getConnection() throws ClassNotFoundException, SQLException {
+		
 		Class.forName(DRIVER_NAME);
 		Connection conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
 		
