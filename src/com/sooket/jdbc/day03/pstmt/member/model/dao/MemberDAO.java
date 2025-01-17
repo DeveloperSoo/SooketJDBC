@@ -30,8 +30,8 @@ public class MemberDAO {
 
 
 
-	// 회원가입
-	public int insertMember(Member member) {
+	// 회원가입 (Insert)
+	public int insertMember(Connection conn, Member member) {
 		String query = "INSERT INTO MEMBER_TBL(MEMBER_ID, MEMBER_PWD, MEMBER_NAME, GENDER, AGE)" 
 				+  "VALUES('"
 				+member.getMemberId()+"','"
@@ -42,12 +42,12 @@ public class MemberDAO {
 		
 		query ="INSERT INTO MEMBER_TBL(MEMBER_ID, MEMBER_PWD, MEMBER_NAME, GENDER, AGE) VALUES(?, ?, ?, ?, ?)";
 		int result = 0;
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			conn =  this.getConnection();
+			//conn =  this.getConnection();
 			stmt = conn.createStatement();
 			
 			pstmt = conn.prepareStatement(query);
@@ -61,8 +61,8 @@ public class MemberDAO {
 			//result = stmt.executeUpdate(query);
 			result = pstmt.executeUpdate();
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,8 +80,9 @@ public class MemberDAO {
 		return result;
 	}
 
-	// 회원정보 수정
-	public int updateMember(Member member) {
+	
+	// 회원정보 수정 (Update)
+	public int updateMember(Connection conn, Member member) {
 		String query = "UPDATE MEMBER_TBL SET MEMBER_PWD = '"+member.getMemberPwd()
 											+"' , EMAIL = '"+member.getEmail()
 											+"', PHONE = '"+member.getPhone()
@@ -91,12 +92,12 @@ public class MemberDAO {
 		
 		query = "UPDATE MEMBER_TBL SET MEMBER_PWD = ?, EMAIL = ?, PHONE = ?, ADDRESS = ?, HOBBY = ? WHERE MEMBER_ID = ?";
 		int result = 0;
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		PreparedStatement pstmt = null;
 		
 			try {
-				conn = this.getConnection();
+				//conn = this.getConnection();
 				stmt = conn.createStatement();
 				// 쿼리문 실행 코드 누락 주의!
 				pstmt = conn.prepareStatement(query);
@@ -110,9 +111,9 @@ public class MemberDAO {
 				//result = stmt.executeUpdate(query);
 				result = pstmt.executeUpdate();
 				
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+//			} catch (ClassNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -126,35 +127,30 @@ public class MemberDAO {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			
 			}
 		return result;
 	}
 
 
-	// 회원 탈퇴
-	public int deleteMember(String memberId) {
+	// 회원 탈퇴 (Delete)
+	public int deleteMember(Connection conn, String memberId) {
 		String query = "DELETE FROM MEMBER_TBL WHERE LOWER(MEMBER_ID) = LOWER('"+memberId+"')";
 		//String query = "DELETE FROM MEMBER_TBL WHERE MEMBER_ID = '"+memberId+"'";
 		query = "DELETE FROM MEMBER_TBL WHERE LOWER(MEMBER_ID) = LOWER(?)";
 		int result = 0;
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			conn = this.getConnection();
+			//conn = this.getConnection();
 			stmt = conn.createStatement();
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, memberId);
 			//result = stmt.executeUpdate(query);
 			result = pstmt.executeUpdate();
-			
-			
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -172,16 +168,16 @@ public class MemberDAO {
 	}
 
 
-	// 전체 회원 조회
-	public List<Member> selectList() {
+	// 전체 회원 조회 (SelectList)
+	public List<Member> selectList(Connection conn) {
 		List<Member> mList = new ArrayList<Member>();
 		String query = "SELECT * FROM MEMBER_TBL ORDER BY 1";
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		ResultSet rset = null;
 		try {
 			// 커넥션 생성시 주소를 계속 반복하지않기 위해 메소드를 한개 선언
-			conn = this.getConnection();
+			//conn = this.getConnection();
 			stmt = conn.createStatement();
 			rset = stmt.executeQuery(query);
 			// rset에 테이블 형대로 데이터가 있으나 그대로 사용못함
@@ -193,11 +189,9 @@ public class MemberDAO {
 				// while문이 동작하면서 도믄 레코드에 대한 정보를 
 				// mList에 담을 수 있도록 add 해줌
 				mList.add(member);
-			}
-
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			}			
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -213,8 +207,8 @@ public class MemberDAO {
 		return mList;
 	}
 
-	// 검색한 회원 정보 조회
-	public Member selectOneById(String memberId) {
+	// 검색한 회원 정보 조회 (SelectByOne)
+	public Member selectOneById(Connection conn, String memberId) {
 		/*
 		 * 1. 쿼리문에 위치홀더(?)
 		 * 2. PreparedStatement 생성 
@@ -225,22 +219,20 @@ public class MemberDAO {
 		String query = "SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = '"+memberId+"'";
 		query = "SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = ?"; // 물음표로 위치홀더 표시
 		Member member = null;
-		Connection conn = null;
+		//Connection conn = null;
 		Statement stmt = null;
 		PreparedStatement pstmt = null; //선언을 하고
 		ResultSet rset = null;
-		
-		
+			
 		try {
-			conn = this.getConnection();
+			//conn = this.getConnection();
 			stmt = conn.createStatement();
 			pstmt = conn.prepareStatement(query); // 바로 쿼리문을 넣음 위에 stmt랑 비교
 			pstmt.setString(1, memberId); // 쿼리문 실행 준비 완료
 			// 앞에 숫자는 위치홀더의 위치이며 물음표 2개면 2개써야하는것
 			
 			
-			//rset = stmt.executeQuery(query);
-			
+			//rset = stmt.executeQuery(query);	
 			rset = pstmt.executeQuery();
 			// 이미 앞에서 쿼리를 넣었기 때문에 출력할때 넣을 필요가 없음
 			
@@ -249,8 +241,8 @@ public class MemberDAO {
 				member = this.rsetToMember(rset);				
 			}
 				
-		} catch (ClassNotFoundException e) {	
-			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {	
+//			e.printStackTrace();
 		} catch (SQLException e) {		
 			e.printStackTrace();
 		} finally {
@@ -267,6 +259,8 @@ public class MemberDAO {
 		return member;
 	}
 
+	
+	
 
 	private Member rsetToMember(ResultSet rset) throws SQLException {
 		
