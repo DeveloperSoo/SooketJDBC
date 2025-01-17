@@ -13,7 +13,7 @@ public class MemberService {
 	
 	
 	public MemberService () {
-		jdbcTemplate = new JDBCTemplate();
+		jdbcTemplate = JDBCTemplate.getInstance();
 		mDao = new MemberDAO();
 		
 	}
@@ -27,9 +27,7 @@ public class MemberService {
 			conn = jdbcTemplate.getConnection();
 			result = mDao.insertMember(conn, member);
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}  catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -51,9 +49,7 @@ public class MemberService {
 			conn = jdbcTemplate.getConnection();
 			result = mDao.deleteMember(conn, memberId);
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {		
+		}  catch (SQLException e) {		
 			e.printStackTrace();
 		} finally {
 			try {
@@ -74,9 +70,7 @@ public class MemberService {
 		try {
 			conn = jdbcTemplate.getConnection();
 			result = mDao.updateMember(conn, member);		
-		} catch (ClassNotFoundException e) {			
-			e.printStackTrace();
-		} catch (SQLException e) {			
+		}  catch (SQLException e) {			
 			e.printStackTrace();
 		}	finally {
 				try {
@@ -98,9 +92,7 @@ public class MemberService {
 		try {
 			conn = jdbcTemplate.getConnection();
 			mList = mDao.selectList(conn);
-		} catch (ClassNotFoundException e) {		
-			e.printStackTrace();
-		} catch (SQLException e) {		
+		}  catch (SQLException e) {		
 			e.printStackTrace();
 		} finally {
 			try {
@@ -121,8 +113,6 @@ public class MemberService {
 		try {
 			conn = jdbcTemplate.getConnection();
 			member = mDao.selectOneById(conn, memberId);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
